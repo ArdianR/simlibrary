@@ -1,20 +1,17 @@
+<!DOCTYPE html>
 <html class="  js flexbox no-touch cssanimations audio localstorage svg cors placeholder xhr2 overthrow-enabled" lang="en"><!--<![endif]-->
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
 
-		<title><?=Config::Title($page_title)?></title>
+	<title><?=Config::Title($page_title)?></title>
 
-		<meta content="The #1 marketplace for premium website templates, including themes for WordPress, Magento, Drupal, Joomla, and more.  Create a website, fast." name="description">
-
-		<meta name="viewport" content="width=device-width,initial-scale=1">
-
-		<link href="<?=URL::Base("assets/cms/template")?>/index-c7d9236d6d7a2a71be56e6f30caeac24.css" media="all" rel="stylesheet" type="text/css">
-		<link href="<?=URL::Base("assets/cms/template")?>/index-0bbf701da4f85ab51d3137c19e5337aa.css" media="all" rel="stylesheet" type="text/css">
-		<link href="<?=URL::Base("assets/cms/template")?>/index-f3bedd13efd1437bc5463d0cfcb5446c.css" media="all" rel="stylesheet" type="text/css">
-		<script src="<?=URL::Base("assets/cms/template")?>/head-f0efac1d6976fdf77355672935951571.js" type="text/javascript"></script>
-	</head>
-	<body id="" class="" data-view="app" data-responsive="true" data-user-signed-in="false">
+	<link href="<?=URL::Base("assets/cms/template")?>/index-c7d9236d6d7a2a71be56e6f30caeac24.css" media="all" rel="stylesheet" type="text/css">
+	<link href="<?=URL::Base("assets/cms/template")?>/index-0bbf701da4f85ab51d3137c19e5337aa.css" media="all" rel="stylesheet" type="text/css">
+	<link href="<?=URL::Base("assets/cms/template")?>/index-f3bedd13efd1437bc5463d0cfcb5446c.css" media="all" rel="stylesheet" type="text/css">
+	<script src="<?=URL::Base("assets/cms/template")?>/head-f0efac1d6976fdf77355672935951571.js" type="text/javascript"></script>
+</head>
+<body id="" class="" data-view="app" data-responsive="true" data-user-signed-in="false">
     
     <!--[if lte IE 8]>
   <div style="color:#fff;background:#f00;padding:20px;text-align:center;">

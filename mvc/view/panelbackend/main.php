@@ -154,6 +154,9 @@
                                 <a href="<?=URL::Base("panelbackend/buku")?>"><i class="fa fa-book fa-fw"></i> Buku</a>
                             </li>
                              <li>
+                                <a href="<?=URL::Base("panelbackend/kategori")?>"><i class="fa fa-tag fa-fw"></i> Kategori Buku</a>
+                            </li>
+                             <li>
                                 <a href="<?=URL::Base("panelbackend/lokasi")?>"><i class="fa fa-building fa-fw"></i> Lokasi Buku</a>
                             </li>
                         </ul>

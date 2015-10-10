@@ -46,6 +46,19 @@ class Buku extends _adminController{
 
 		$this->data['lokasiarr'] = $lokasiarr;
 
+		#mengambil data kategori
+		$modelkategori = new KategoriModel();
+
+		$rskategori = $modelkategori->GArray();
+
+		#membuat array lokasi
+		$kategoriarr = array(''=>'-pilih-');
+		foreach($rskategori as $row){
+			$kategoriarr[$row['id_kategori']] = $row['nama'];
+		}
+
+		$this->data['kategoriarr'] = $kategoriarr;
+
 
 		$this->pk = $this->model->pk;
 		$this->data['pk'] = $this->pk;
@@ -54,6 +67,7 @@ class Buku extends _adminController{
 	function _actionIndex( $page=1){
 		$this->data['header']=array(
 			array('name'=>'nama', 'label'=>'Nama', 'width'=>"auto"),
+			array('name'=>'id_kategori', 'label'=>'Kategori', 'width'=>"auto", 'type'=>'list', 'value'=>$this->data['kategoriarr']),
 			array('name'=>'id_lokasi', 'label'=>'Lokasi', 'width'=>"auto", 'type'=>'list', 'value'=>$this->data['lokasiarr']),
 			array('name'=>'jumlah', 'label'=>'Jumlah', 'width'=>"auto"),
 			
@@ -158,6 +172,7 @@ class Buku extends _adminController{
 			$record['penulis'] = $this->post['penulis'];
 			$record['penerbit'] = $this->post['penerbit'];
 			$record['id_lokasi'] = $this->post['id_lokasi'];
+			$record['id_kategori'] = $this->post['id_kategori'];
 			$record['isbn'] = $this->post['isbn'];
 			$record['deskripsi'] = $this->post['deskripsi'];
 			$record['jumlah'] = $this->post['jumlah'];
@@ -224,7 +239,7 @@ class Buku extends _adminController{
 
 	function _uploadFile($id_buku){
 		$return = true;
-		if($_FILES['file']){
+		if($_FILES['file']['name']){
 			$record = array();
 			$record['nama'] = $_FILES['file']['name'];
 			$record['id_buku'] = $id_buku;
