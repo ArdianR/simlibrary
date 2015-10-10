@@ -14,11 +14,12 @@ class Katalog extends _visitorController{
 
 		$this->data['page_title']='Daftar Buku';
 		$this->model = new BukuModel();
-		$rows = $this->model->GetKategori();
 
-		$listkategori=array(''=>'-pilih-');
-		foreach($rows as $row){
-			$listkategori[$row['buku_kategori_id']]=$row['nama'];
+		$modelkategori = new KategoriModel();
+
+		$rskategori = $modelkategori->GArray();
+		foreach($rskategori as $row){
+			$listkategori[$row['id_kategori']]=$row['nama'];
 		}
 
 		$this->data['listkategori'] = $listkategori;
@@ -29,23 +30,14 @@ class Katalog extends _visitorController{
 		$this->_setFilter($filter);
 	}
 
-	function _actionIndex($page=1, $buku_kategori_id=0){
-		$this->data['header']=array(
-			array('name'=>'buku_kategori_id', 'label'=>'Spesialis', 'width'=>"300px", 'type'=>'list', 'value'=>$this->data['listkategori']),
-			array('name'=>'nama', 'label'=>'Nama', 'width'=>"auto"),
-		);
-
-		if($buku_kategori_id){
-			$this->post['act'] = 'list_search';
-			$this->post['list_search'] = array('buku_kategori_id' => $buku_kategori_id);
-		}
-
+	function _actionIndex($page=1){
 		$this->data['list']=$this->_getList($page);
-
+		
 		$this->data['page']=$page;
+		$this->data['total_rows']=$this->data['list']['total'];
 
 		$param_paging = array(
-			'base_url'=>URL::Base("buku/index"),
+			'base_url'=>URL::Base("katalog/index"),
 			'cur_page'=>$page,
 			'total_rows'=>$this->data['list']['total'],
 			'per_page'=>$this->limit,
@@ -53,14 +45,16 @@ class Katalog extends _visitorController{
 			'first_tag_close'=>'</li>',
 			'last_tag_open'=>'<li>',
 			'last_tag_close'=>'</li>',
-			'cur_tag_open'=>'<li class="selected"><span>',
+			'cur_tag_open'=>'<li><span class="pagination__page--current">',
 			'cur_tag_close'=>'</span></li>',
 			'next_tag_open'=>'<li>',
 			'next_tag_close'=>'</li>',
 			'prev_tag_open'=>'<li>',
 			'prev_tag_close'=>'</li>',
 			'num_tag_open'=>'<li>',
-			'num_tag_close'=>'</li>'
+			'num_tag_close'=>'</li>',
+			'anchor_class'=>'pagination__page',
+
 			);
 		$paging = new Pagination($param_paging);
 
@@ -84,7 +78,7 @@ class Katalog extends _visitorController{
 		);
 
 		if($this->post['act']){
-			URL::Redirect('buku');
+			URL::Redirect('katalog');
 		}
 
 		$respon = $this->model->SelectGrid(
@@ -102,5 +96,93 @@ class Katalog extends _visitorController{
 			$this->NoData();
 		
 		$this->View($this->viewdetail);		
+	}
+
+
+	function _actionPreviewFile($id_buku){
+		$modelfile = new BukuFileModel();
+
+		$row = $modelfile->GRow("*","where id_buku = $id_buku");
+		if($row ){
+			header("Content-Type: {$row['content_type']}");
+			header("Content-Disposition: inline; filename='{$row['nama']}'");
+			echo base64_decode($row['isi_file']);
+		}else{
+			$this->Error404();
+		}	
+	}
+
+	protected function _getFilter(){
+		$this->xss_clean = true;
+
+		$this->FilterRequest();
+
+		$filter_arr = array();
+		if($this->post['act']=='list_filter'){
+			if(!count($this->post['list_filter'])){
+				$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = array();
+			}elseif(!$_SESSION[SESSION_APP][$this->ctrl]['list_filter']){
+				$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = $this->post['list_filter'];
+			}else{
+				$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = array_merge($_SESSION[SESSION_APP][$this->ctrl]['list_filter'],$this->post['list_filter']);
+			}
+		}
+		#format lama data = array(array('key'=>'id_kategori','value'=>array('1','2','3')))
+		#format baru data = array('id_kategori'=>array(1,2,3,4,5))
+		if($_SESSION[SESSION_APP][$this->ctrl]['list_filter']){
+			$this->data['list_filter'] = $_SESSION[SESSION_APP][$this->ctrl]['list_filter'];
+			foreach ($_SESSION[SESSION_APP][$this->ctrl]['list_filter'] as $key=>$values){
+				$filter_arr1 = array();
+				foreach($values as $k=>$v){
+					replaceSingleQuote($v);
+					if(!empty($v))
+						$filter_arr1[] = $key ." = '$v'";
+				}
+
+				$filter_str = implode(' or ',$filter_arr1);
+
+				if($filter_str){
+					$filter_arr[]="($filter_str)";
+				}
+			}
+		}	
+
+
+		if($this->post['act']=='search'){
+			$_SESSION[SESSION_APP][$this->ctrl]['keyword'] = $this->post['keyword'];
+		}
+
+		if($_SESSION[SESSION_APP][$this->ctrl]['keyword']){
+			$this->data['keyword'] = $keyword = strtolower($_SESSION[SESSION_APP][$this->ctrl]['keyword']);
+			replaceSingleQuote($keyword);
+			$filter_arr[]=" (lower(nama) like '%{$keyword}%' or lower(deskripsi) like '%{$keyword}%' or lower(penerbit) like '%{$keyword}%' or lower(penulis) like '%{$keyword}%' or lower(isbn) like '%{$keyword}%')";
+		}
+
+
+		if($this->post['act']=='list_search' && $this->post['list_search']){
+			if(!$_SESSION[SESSION_APP][$this->ctrl]['list_search']){
+				$_SESSION[SESSION_APP][$this->ctrl]['list_search'] = $this->post['list_search'];
+			}else{
+				$_SESSION[SESSION_APP][$this->ctrl]['list_search'] = array_merge($_SESSION[SESSION_APP][$this->ctrl]['list_search'],$this->post['list_search']);
+
+			}
+		}
+
+		if($_SESSION[SESSION_APP][$this->ctrl]['list_search']){
+			foreach ($_SESSION[SESSION_APP][$this->ctrl]['list_search'] as $k=>$v){
+				replaceSingleQuote($v);
+				if(!empty($v))
+					$filter_arr[]="lower($k) like '%$v%'";
+			}
+		}	
+
+		$this->data['filter_arr'] = $_SESSION[SESSION_APP][$this->ctrl]['list_search'];
+
+		if(count($filter_arr)){
+			$this->filter .= ' and '.implode(' and ', $filter_arr);
+		}
+
+
+		return $this->filter;
 	}
 }

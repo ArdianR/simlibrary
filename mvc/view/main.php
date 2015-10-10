@@ -144,3 +144,22 @@
 
 
 </body></html>
+<style>
+	.item-thumbnail__image {
+position: relative;
+overflow: hidden;
+width: 143px;
+}
+.t-heading.-size-xs {
+font-size: 16px;
+padding-top: 10px;
+font-weight: normal;
+}
+.crop{
+	overflow: hidden;
+	height: 200px;
+}
+.content-main--basic {
+	min-height: 0px;
+}
+</style>

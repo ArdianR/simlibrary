@@ -13,6 +13,10 @@ class Home extends _visitorController{
 		$this->data['pk'] = $this->pk;
 	}
 	function _actionIndex(){
+
+		$this->data['book_new'] = $this->conn->GetArray("select * from library_buku order by created_date limit 6");
+		$this->data['best_book'] = $this->conn->GetArray("select * from library_buku order by created_date limit 6");
 		$this->view("home");
 	}
+
 }
