@@ -31,4 +31,4 @@ function MyErrorHandler($errno, $errstr, $errfile, $errline)
 	throw new Exception($error);
 }
 
-set_error_handler("MyErrorHandler");
+#set_error_handler("MyErrorHandler");

@@ -329,7 +329,7 @@ class UI {
 			$batas_bawah = $list['total'];
 		}
 		?>
-		<ul class="pagination page_margin_top" style="float:left">
+		<ul class="pagination__list" style="float:left">
 
 			<?=$paging?> 
 			<li >
@@ -353,7 +353,7 @@ class UI {
 			);
 			?>
 			</li></ul>
-			<ul class="pagination page_margin_top">
+			<ul class="pagination__list">
 			<li>
 			<span style="border:none;">
 			<?=$batas_atas?> sampai <?=$batas_bawah?> dari <?=$list['total']?> data

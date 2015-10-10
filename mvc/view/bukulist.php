@@ -134,7 +134,11 @@
         <table>
           <tr>
             <td>Kategori</td>
-            <td>: <a href="/category/site-templates"><?=$listkategori[$row['id_kategori']]?></a></td>
+            <td>: <a href="<?=URL::Base("katalog/set_kategori/{$row['id_kategori']}")?>"><?=$listkategori[$row['id_kategori']]?></a></td>
+          </tr>
+          <tr>
+            <td>Lokasi</td>
+            <td>: <?=$row['lokasi']?></td>
           </tr>
           <tr>
             <td>ISBN</td>

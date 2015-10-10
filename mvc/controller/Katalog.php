@@ -67,6 +67,20 @@ class Katalog extends _visitorController{
 		$this->View($this->viewlist);
 	}
 
+	function _actionSetKategori($id_kategori){
+
+		$this->post['list_filter'] = array('id_kategori'=>array($id_kategori));
+		if(!count($this->post['list_filter'])){
+			$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = array();
+		}elseif(!$_SESSION[SESSION_APP][$this->ctrl]['list_filter']){
+			$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = $this->post['list_filter'];
+		}else{
+			$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = array_merge($_SESSION[SESSION_APP][$this->ctrl]['list_filter'],$this->post['list_filter']);
+		}
+
+		URL::Redirect('katalog');
+	}
+
 	protected function _getList($page=1){
 		$this->_resetList();
 		
@@ -81,7 +95,7 @@ class Katalog extends _visitorController{
 			URL::Redirect('katalog');
 		}
 
-		$respon = $this->model->SelectGrid(
+		$respon = $this->model->SelectGrid1(
 			$param
 		);
 		

@@ -84,6 +84,14 @@ class Controller{
 
 	public function XSS($val) 
 	{
+		if(is_array($val)){
+			$valarr = array();
+			foreach ($val as $key => $value) {
+				# code...
+				$valarr[$key] = $this->XSS($value);
+			}
+			return $valarr;
+		}
 		//axe all non printables
 		$val = preg_replace('/([\x00-\x08,\x0b-\x0c,\x0e-\x19])/', '', $val);
 		

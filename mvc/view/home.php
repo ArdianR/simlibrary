@@ -7,10 +7,11 @@
 									</h3>
 
 										<div class="home-search__search">
-											<form accept-charset="UTF-8" action="http://themeforest.net/search" class="search-field -size-xl -border-none" id="search" method="get">
+											<form accept-charset="UTF-8" action="<?=URL::Base('katalog/index')?>" class="search-field -size-xl -border-none" id="search" method="post">
 												
+<input type="hidden" name="act" id="act" value='search'>
 												<div class="search-field__input">
-													<input class="js-term search-field__input-field" name="term" placeholder="Ketikkan kata pencarian" type="search">
+													<input class="js-term search-field__input-field" name="keyword" placeholder="Ketikkan kata pencarian" type="search">
 												</div>
 												<button class="search-field__button" type="submit">
 													<i class="e-icon -icon-search"><span class="e-icon__alt">Search</span></i>
