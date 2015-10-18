@@ -121,7 +121,7 @@ CREATE TABLE `contents_statistik_pengunjung` (
   `tanggal` date DEFAULT NULL,
   `jumlah` int(11) DEFAULT NULL,
   PRIMARY KEY (`statistik_pengunjung_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +130,7 @@ CREATE TABLE `contents_statistik_pengunjung` (
 
 LOCK TABLES `contents_statistik_pengunjung` WRITE;
 /*!40000 ALTER TABLE `contents_statistik_pengunjung` DISABLE KEYS */;
-INSERT INTO `contents_statistik_pengunjung` VALUES (36,'2015-09-22',1),(37,'2015-09-23',1),(38,'2015-09-29',2),(39,'2015-09-30',3),(40,'2015-10-01',1),(41,'2015-10-04',1),(42,'2015-10-05',1),(43,'2015-10-06',1),(44,'2015-10-07',1),(45,'2015-10-08',1),(46,'2015-10-09',1),(47,'2015-10-10',3);
+INSERT INTO `contents_statistik_pengunjung` VALUES (36,'2015-09-22',1),(37,'2015-09-23',1),(38,'2015-09-29',2),(39,'2015-09-30',3),(40,'2015-10-01',1),(41,'2015-10-04',1),(42,'2015-10-05',1),(43,'2015-10-06',1),(44,'2015-10-07',1),(45,'2015-10-08',1),(46,'2015-10-09',1),(47,'2015-10-10',3),(48,'2015-10-16',1);
 /*!40000 ALTER TABLE `contents_statistik_pengunjung` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,7 +409,7 @@ CREATE TABLE `public_sys_user` (
 
 LOCK TABLES `public_sys_user` WRITE;
 /*!40000 ALTER TABLE `public_sys_user` DISABLE KEYS */;
-INSERT INTO `public_sys_user` VALUES (1,'arip','Solikul Arip','127.0.0.1','2015-10-09 06:37:44','1','6f9b0a55df8ac28564cb9f63a10be8af6ab3f7c2');
+INSERT INTO `public_sys_user` VALUES (1,'arip','Solikul Arip','127.0.0.1','2015-10-16 21:41:10','1','6f9b0a55df8ac28564cb9f63a10be8af6ab3f7c2');
 /*!40000 ALTER TABLE `public_sys_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -422,7 +422,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-10 21:54:34
+-- Dump completed on 2015-10-18 12:46:26
 CREATE DATABASE  IF NOT EXISTS `librarian_upload` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `librarian_upload`;
 -- MySQL dump 10.13  Distrib 5.5.40, for debian-linux-gnu (x86_64)
@@ -482,4 +482,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-10 21:54:34
+-- Dump completed on 2015-10-18 12:46:26
