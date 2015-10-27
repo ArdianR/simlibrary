@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /ketonggo_project/update
+RewriteBase /update
 RewriteCond %{REQUEST_URI} ^core.*
 RewriteRule ^(.*)$ /index.php/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
