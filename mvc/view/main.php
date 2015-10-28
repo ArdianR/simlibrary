@@ -56,7 +56,8 @@
 							</div>
 
 							<div class="header-mini__logo">
-							<a href="http://themeforest.net/?osr=tn" class="header-mini__logo--themeforest">ThemeForest</a>
+							<!--<a href="http://themeforest.net/?osr=tn" class="header-mini__logo--themeforest">ThemeForest</a>
+							-->
 							</div>
 						</div>
 
