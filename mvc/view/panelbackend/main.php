@@ -184,7 +184,9 @@
                         </ul>
                     </li>
                     <li><a href="<?=URL::Base("panelbackend/testimoni")?>"><i class="fa fa-comment fa-fw"></i> Testimoni</a></li>
-                    
+                    <li>
+                        <a href="<?=URL::Base("panelbackend/master")?>"><i class="fa fa-dashboard fa-fw"></i> Master File</a>
+                    </li>
                     </ul>
                 <?php } ?>
                 </div><!--/.nav-collapse -->
