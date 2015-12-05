@@ -18,7 +18,7 @@
     		$val = $rows[$rows1['name']];
             if($rows1['name']=='nama'){
                 echo "<td><a href='".($url=URL::Base($page_ctrl."/detail/$rows[$pk]"))."'>$val</a></td>";   
-            }elseif($rows1['name']=='penulis'){
+            }elseif($rows1['name']=='isi'){
                 echo "<td>".ReadMore($val,$url)."</td>";
             }else{
                 switch ($rows1['type']) {

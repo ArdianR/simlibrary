@@ -1,4 +1,6 @@
-<?php class _visitorController extends Controller{
+<?php 
+define(USER, 'userquisioner');
+class _visitorController extends Controller{
 	protected $layout = "";
 	public $front;
 	public $pk;
@@ -6,7 +8,6 @@
 	public $limit_arr = array('5','10','15');
 	protected $viewdetail = "";
 	protected $viewlist = "";
-	protected $model_testimoni;
 	protected $filter = " 1=1 ";
 	public function __construct()
 	{
@@ -16,7 +17,6 @@
 
 		$this->helper("Action");
 		$this->helper("Shelper");
-
 		$this->_pageIndex();
 	}
 
@@ -29,72 +29,6 @@
 				$_SESSION['ip_client'] = $_SERVER["REMOTE_ADDR"];
 			}
 		}
-
-		$this->data['list_sponsor']=$this->front->GetSponsor();
-        $this->model_testimoni = new TestimoniModel();
-
-        $list_testimoni = $this->model_testimoni->SelectGrid(array('order'=>'modified_date desc','filter'=>"is_approve = '1'"));
-
-        $this->data['list_testimoni'] = $list_testimoni['rows'];
-
-		if($this->session->Get($this->ctrl.'row_testimoni')){
-			$this->data['row_testimoni']=$this->session->GetFlash($this->ctrl.'row_testimoni');
-		}
-
-		if($this->post['act']=='save_testimoni'){
-			$this->_saveTestimoni();
-		}
-	}
-
-	protected function _saveTestimoni(){
-		$record = array();
-		$record['nama'] = $this->post['nama'];
-		$record['no_telepon'] = $this->post['no_telepon'];
-		$record['email'] = $this->post['email'];
-		$record['isi'] = $this->post['isi'];
-		
-		$rules = array(
-		   array(
-				 'field'   => 'nama',
-				 'label'   => 'Nama',
-				 'rules'   => 'required'
-			  ),
-		   array(
-				 'field'   => 'no_telepon',
-				 'label'   => 'No. Telephone',
-				 'rules'   => 'phone'
-			  ),
-		   array(
-				 'field'   => 'email',
-				 'label'   => 'Email',
-				 'rules'   => 'email'
-			  ),
-		   array(
-				 'field'   => 'isi',
-				 'label'   => 'Testimonials',
-				 'rules'   => 'required'
-			  )
-		);
-
-		$validation = new FormValidation($rules);
-		if ($validation->run() == FALSE)
-		{
-			$this->SetFlash('row_testimoni',  $record);
-			$this->SetFlash('err_msg', $validation->GetError());	
-			URL::Redirect();
-		}
-
-        $this->setLogRecord($record,$id);
-        $record['is_approve'] = 0;
-
-		$return = $this->model_testimoni->Insert($record);
-		if ($return) {
-			$this->SetFlash('suc_msg', "Terima kasih {$record['nama']} atas testimoni yang Anda berikan.");				
-		} else {
-			$this->SetFlash('row_testimoni',  $record);
-			$this->SetFlash('err_msg', "Maaf {$record['nama']}, testimoni Anda gagal disimpan.");	
-		}
-		URL::Redirect();	
 	}
 
 	protected function view($view='')
@@ -133,20 +67,20 @@
 
 	protected function _resetList(){
 		if($this->post['act']=='list_reset'){
-			unset($_SESSION[SESSION_APP][$this->ctrl]['list_limit']);
-			unset($_SESSION[SESSION_APP][$this->ctrl]['list_sort']);
-			unset($_SESSION[SESSION_APP][$this->ctrl]['list_filter']);
-			unset($_SESSION[SESSION_APP][$this->ctrl]['list_search']);
+			unset($_SESSION[SESSION_APP][$this->page_ctrl]['list_limit']);
+			unset($_SESSION[SESSION_APP][$this->page_ctrl]['list_sort']);
+			unset($_SESSION[SESSION_APP][$this->page_ctrl]['list_filter']);
+			unset($_SESSION[SESSION_APP][$this->page_ctrl]['list_search']);
 		}
 	}
 
 	protected function _limit(){
 		if($this->post['act']=='list_limit' && $this->post['list_limit']){
-			$_SESSION[SESSION_APP][$this->ctrl]['list_limit']=$this->post['list_limit'];
+			$_SESSION[SESSION_APP][$this->page_ctrl]['list_limit']=$this->post['list_limit'];
 		}
 
-		if($_SESSION[SESSION_APP][$this->ctrl]['list_limit']){
-			$this->limit = $_SESSION[SESSION_APP][$this->ctrl]['list_limit'];
+		if($_SESSION[SESSION_APP][$this->page_ctrl]['list_limit']){
+			$this->limit = $_SESSION[SESSION_APP][$this->page_ctrl]['list_limit'];
 		}
 
 		return $this->limit;
@@ -156,20 +90,20 @@
 
 		if($this->post['act']=='list_sort' && $this->post['list_sort']){
 
-			$_SESSION[SESSION_APP][$this->ctrl]['list_order']=$this->post['list_order'];
-			$_SESSION[SESSION_APP][$this->ctrl]['list_sort']=$this->post['list_sort'];				
+			$_SESSION[SESSION_APP][$this->page_ctrl]['list_order']=$this->post['list_order'];
+			$_SESSION[SESSION_APP][$this->page_ctrl]['list_sort']=$this->post['list_sort'];				
 		}
 
-		if($_SESSION[SESSION_APP][$this->ctrl]['list_sort']){
-			$order = $_SESSION[SESSION_APP][$this->ctrl]['list_sort'];
+		if($_SESSION[SESSION_APP][$this->page_ctrl]['list_sort']){
+			$order = $_SESSION[SESSION_APP][$this->page_ctrl]['list_sort'];
 		}
 
-		if($_SESSION[SESSION_APP][$this->ctrl]['list_order'] && $order){
-			$order .= ' '. $_SESSION[SESSION_APP][$this->ctrl]['list_order'];
+		if($_SESSION[SESSION_APP][$this->page_ctrl]['list_order'] && $order){
+			$order .= ' '. $_SESSION[SESSION_APP][$this->page_ctrl]['list_order'];
 		}
 
-		$this->data['list_sort'] = $_SESSION[SESSION_APP][$this->ctrl]['list_sort'];
-		$this->data['list_order'] = $_SESSION[SESSION_APP][$this->ctrl]['list_order'];
+		$this->data['list_sort'] = $_SESSION[SESSION_APP][$this->page_ctrl]['list_sort'];
+		$this->data['list_order'] = $_SESSION[SESSION_APP][$this->page_ctrl]['list_order'];
 
 		replaceSingleQuote($order);
 
@@ -197,16 +131,16 @@
 		$filter_arr = array();
 
 		if($this->post['act']=='list_filter' && $this->post['list_filter']){
-			if(!$_SESSION[SESSION_APP][$this->ctrl]['list_filter']){
-				$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = $this->post['list_filter'];
+			if(!$_SESSION[SESSION_APP][$this->page_ctrl]['list_filter']){
+				$_SESSION[SESSION_APP][$this->page_ctrl]['list_filter'] = $this->post['list_filter'];
 			}else{
-				$_SESSION[SESSION_APP][$this->ctrl]['list_filter'] = array_merge($_SESSION[SESSION_APP][$this->ctrl]['list_filter'],$this->post['list_filter']);
+				$_SESSION[SESSION_APP][$this->page_ctrl]['list_filter'] = array_merge($_SESSION[SESSION_APP][$this->page_ctrl]['list_filter'],$this->post['list_filter']);
 
 			}
 		}
 
-		if($_SESSION[SESSION_APP][$this->ctrl]['list_filter']){
-			foreach ($_SESSION[SESSION_APP][$this->ctrl]['list_filter'] as $r){
+		if($_SESSION[SESSION_APP][$this->page_ctrl]['list_filter']){
+			foreach ($_SESSION[SESSION_APP][$this->page_ctrl]['list_filter'] as $r){
 				$key = $r['key'];
 				$filter_arr1 = array();
 
@@ -237,23 +171,23 @@
 
 
 		if($this->post['act']=='list_search' && $this->post['list_search']){
-			if(!$_SESSION[SESSION_APP][$this->ctrl]['list_search']){
-				$_SESSION[SESSION_APP][$this->ctrl]['list_search'] = $this->post['list_search'];
+			if(!$_SESSION[SESSION_APP][$this->page_ctrl]['list_search']){
+				$_SESSION[SESSION_APP][$this->page_ctrl]['list_search'] = $this->post['list_search'];
 			}else{
-				$_SESSION[SESSION_APP][$this->ctrl]['list_search'] = array_merge($_SESSION[SESSION_APP][$this->ctrl]['list_search'],$this->post['list_search']);
+				$_SESSION[SESSION_APP][$this->page_ctrl]['list_search'] = array_merge($_SESSION[SESSION_APP][$this->page_ctrl]['list_search'],$this->post['list_search']);
 
 			}
 		}
 
-		if($_SESSION[SESSION_APP][$this->ctrl]['list_search']){
-			foreach ($_SESSION[SESSION_APP][$this->ctrl]['list_search'] as $k=>$v){
+		if($_SESSION[SESSION_APP][$this->page_ctrl]['list_search']){
+			foreach ($_SESSION[SESSION_APP][$this->page_ctrl]['list_search'] as $k=>$v){
 				replaceSingleQuote($v);
 				if(!empty($v))
 					$filter_arr[]="lower($k) like '%$v%'";
 			}
 		}	
 
-		$this->data['filter_arr'] = $_SESSION[SESSION_APP][$this->ctrl]['list_search'];
+		$this->data['filter_arr'] = $_SESSION[SESSION_APP][$this->page_ctrl]['list_search'];
 
 		if(count($filter_arr)){
 			$this->filter .= ' and '.implode(' and ', $filter_arr);
@@ -305,8 +239,8 @@
 			</div>';
 			echo "
 			<script type='text/javascript'>
-			jQuery(function(){
-			jQuery('#main-modal').modal('show');
+			$(function(){
+			$('#main-modal').modal('show');
 			});
 			</script>";
 		}
@@ -326,8 +260,8 @@
 			</div>';
 			echo "
 			<script type='text/javascript'>
-			jQuery(function(){
-			jQuery('#main-modal').modal('show');
+			$(function(){
+			$('#main-modal').modal('show');
 			});
 			</script>";
 		}
@@ -347,8 +281,8 @@
 			</div>';
 			echo "
 			<script type='text/javascript'>
-			jQuery(function(){
-			jQuery('#main-modal').modal('show');
+			$(function(){
+			$('#main-modal').modal('show');
 			});
 			</script>";
 		}
@@ -369,8 +303,8 @@
 			</div>';
 			echo "
 			<script type='text/javascript'>
-			jQuery(function(){
-			jQuery('#main-modal').modal('show');
+			$(function(){
+			$('#main-modal').modal('show');
 			});
 			</script>";
 		}

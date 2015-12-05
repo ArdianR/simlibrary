@@ -4,11 +4,13 @@ class Model{
 	public $table;
 	protected $pk;
 	protected $arr_no_quote=array();
-	public $arrNoquote = array();
+	public $arrNoquote=array();
+	public $order_default;
+	protected $str_condition;
 	function __construct(){
         if(!class_exists('ADONewConnection')){
-           	require_once(base_dir.'library/adodb5/adodb.inc.php');
-	       	require_once(base_dir.'library/adodb5/adodb-exceptions.inc.php');
+           	require_once(ketonggo.'library/adodb5/adodb.inc.php');
+	       	require_once(ketonggo.'library/adodb5/adodb-exceptions.inc.php');
         }
         $this->conn = self::getConn();
 	}
@@ -37,8 +39,8 @@ class Model{
 	    return $conn;
     }
 
-    public static function Execute(){
-    	return $this->conn->Execute();
+    public function Execute($sql){
+    	return $this->conn->Execute($sql);
     }
 
 	public function GetOne($sql){
@@ -108,7 +110,7 @@ class Model{
 		
 		if(!empty($str_condition))
 		{
-			$str_condition = " where {$str_condition}";
+			$this->str_condition = $str_condition = " where {$str_condition}";
 		}
 		
 		$col = $this->conn->Execute("select * from ".$this->table." $str_condition ");
@@ -126,6 +128,10 @@ class Model{
 		}
 
 		return $return;
+	}
+
+	public function CheckUpdated(){
+		return $this->conn->GetOne('select 1 from '.$this->table.' '.$this->str_condition);
 	}
 
 	public function Delete($str_condition=""){
@@ -171,6 +177,8 @@ class Model{
 		if(!empty($arr_params['order']))
 		{
 			$str_order = "order by ".$arr_params['order'];
+		}elseif($this->order_default){
+			$str_order = "order by ".$this->order_default;
 		}
 
 		$arr_return['rows'] = $this->conn->PageExecute("
@@ -191,5 +199,27 @@ class Model{
 		");
 		
 		return $arr_return;
+	}
+	
+
+	function GenerateTree($row, $colparent, $colid, $collabel, $valparent=null, &$return=array(), &$i=0, $level=0){
+		$level++;
+		foreach ($row as $key => $value) {
+			# code...
+			if($value[$colparent]==$valparent){
+				unset($row[$key]);
+
+				$space = '';
+				for($k=1; $k<$level; $k++){
+					$space .='---';
+				}
+
+				$value[$collabel] = $space.$value[$collabel];
+				$return[$i]=$value;
+
+				$i++;
+				$this->GenerateTree($row, $colparent, $colid, $collabel, $value[$colid], $return, $i, $level);
+			}
+		}
 	}
 }

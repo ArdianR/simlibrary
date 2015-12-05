@@ -1,68 +1,54 @@
-<div class="theme_page relative">
-	<div class="page_layout page_margin_top clearfix">
-		<div class="page_header clearfix">
-			<div class="page_header_left">
-				<h1 class="page_title"><?=$page_title?></h1>
-				<div style="clear:both"></div>
-				<ul class="bread_crumb">
-					<li>
-						<a href="<?=URL::Base()?>" title="Home">
-						Home
-						</a>
-					</li>
-					<li class="separator icon_small_arrow right_gray">
-						&nbsp;
-					</li>
-					<li>
-						<?=$page_title?>
-					</li>
-				</ul>
-			</div>
-			<div class="page_header_right">
-				<input name="keyword" class="search_input hint" value="<?=$keyword?>" placeholder="To search type and hit enter..." type="text">		
+<div class="context-header ">
+	<div class="grid-container">
+		<nav class="breadcrumbs ">
+			<a href="<?=URL::Base()?>">Home</a>
+			<a href="#"><?=$page_title?></a>
+		</nav>
+		<div class="context-header__heading h-pull-left">
+			<h1 class="t-heading -color-inherit -size-l h-remove-margin">    
+				<?=$page_title?>
+			</h1>
+		</div>
+		<div class="page-title__result-count h-pull-left">
+		</div>
+		<div class="h-clear"></div>
+	</div>
+</div>
+
+
+<div class="content-main--basic" id="content">
+	<div class="">
+		<div class="page-section">
+			<div class="grid-container">
+				<div class="content t-body">
+					<?php
+					foreach($list['rows'] as $rows){
+						$title = str_replace(" ", "-", $rows['nama']).'.html';
+					?>
+					<h3 class="t-heading -size-m">
+          
+							<a href="<?=($url=URL::Base("page/detail/{$add_param}/$rows[$pk]/$title"))?>" title="<?=$rows['nama']?>" class="js-google-analytics__list-event-trigger t-link -color-inherit -decoration-reversed">
+								<?=$rows['nama']?>
+							</a>
+					</h3>
+			        <p class="t-body">
+			            <?=ReadMore($rows['isi'],$url)?>
+			        </p>
+					<?php }?>
+				</div>
+<nav class="js-pagination pagination">
+  <?=UI::showPagingCms($paging,$page, $limit_arr,$limit,$list)?>
+</nav>
+
 			</div>
 		</div>
-		<div class="clearfix">
-			<div class="vc_row wpb_row vc_row-fluid"> 
-				<div class="wpb_column vc_column_container ">
-					<div class="wpb_wrapper">
-						<ul class="blog simple clearfix page_margin_top">
-							<?php
-    						foreach($list['rows'] as $rows){
-    							$title = str_replace(" ", "-", $rows['nama']).'.html';
-    						?>
-							<li class="item_content post-489 post type-post status-publish format-standard hentry category-general">
-							<div class="text">
-								<h3> 
-									<a href="<?=($url=URL::Base("page/detail/{$add_param}/$rows[$pk]/$title"))?>" title="<?=$rows['nama']?>">
-										<?=$rows['nama']?>
-									</a>
-								</h3> 
-								<p>
-								<?=ReadMore($rows['isi'],$url)?>
-								</p>
-							</div>
-							<div class="post_footer clearfix">
-								<ul class="post_footer_details">
-									<li>Posted by <?=$rows['created_name']?></li>
-									<li>on <?=Eng2Ind($rows['created_date'])?></li>
-								</ul>
-							</div>
-							</li>
-							<?php }?>
-						</ul>
-  <?=UI::showPagingCms($paging,$page, $limit_arr,$limit,$list)?>
-					</div> 
-				</div> 
-			</div>
-		</div>		
 	</div>
 </div>
 <script type="text/javascript">
-	jQuery(function(){
-		jQuery("#main_form").submit(function(){
-			if(jQuery("#act").val()==''){
-				jQuery("#act").val('search');
+	$(function(){
+		$("#main_form").submit(function(){
+			if($("#act").val()==''){
+				$("#act").val('search');
 			}
 		});
 	})

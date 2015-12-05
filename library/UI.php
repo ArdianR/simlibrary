@@ -103,11 +103,11 @@ class UI {
 	}
 	
 	// membuat textbox 'file',$row['nama_file'], URL::Base("panelbackend/preview_file/$row[id_buku]"), URL::Base("panelbackend/delete_file/$row[id_buku]"), $edited, false, 'form-control'
-	public static function createInputFile($nameid, $nama_file, $url_preview, $url_delete, $edit=true, $ispreview=false, $class='form-control', $add='style="width:auto"') {
+	public static function createInputFile($nameid, $nama_file='', $url_preview='', $url_delete='', $edit=true, $ispreview=false, $class='form-control', $add='style="width:auto"') {
         //if (empty($class))
         //    $class = 'control_style';
 
-		if(!empty($edit)) {
+		if(!empty($edit) && !$nama_file) {
 			$tb = '<input type="file" name="'.$nameid.'" id="'.$nameid.'"';
 			if($class != '') $tb .= ' class="'.$class.'"';
 			if($add != '') $tb .= ' '.$add;
@@ -121,14 +121,14 @@ class UI {
 		if($ispreview && $nama_file){
 			$tb .= "<img src='$url_preview' width='100px'/>";
 		}
-		
+		if($nama_file){
 		$tb .= "<div style='clear:both'></div>";
-		$tb .= " <a href='$url_preview' target='_BLANK' style='float:left'>$nama_file</a> &nbsp; ";
+		$tb .= " <a href='$url_preview' target='_BLANK'>$nama_file</a> &nbsp; ";
 		if(!empty($edit) && $nama_file) {
-			$tb .= " <a href='$url_delete' style='float:left'>hapus</a> ";
+			$tb .= "<a href='$url_delete'><span class='glyphicon glyphicon-remove' style='color:red'></span></a> ";
 		}
 		$tb .= "<div style='clear:both'></div>";
-		
+		}
 		return $tb;
 	}
 	
@@ -179,8 +179,8 @@ class UI {
 	// membuat combo box
 	public static function createSelect($nameid,$arrval='',$value='',$edit=true,$class='form-control',$add='',$emptyrow=false) {
 		if(!empty($edit)) {
-			$slc = '<select name="'.$nameid.'" id="'.$nameid.'"';
-			if($class != '') $slc .= ' class="'.$class.'"';
+			$slc = '<select data-placeholder="Pilih..." tabindex="2" name="'.$nameid.'" id="'.$nameid.'"';
+			$slc .= ' class="'.(($class != '')?$class:'').'"';
 			if($add != '') $slc .= ' '.$add;
 			$slc .= ">\n";
 			if($emptyrow)
@@ -202,6 +202,41 @@ class UI {
 					}
 				}
 			}
+			if(!isset($slc))
+				$slc = '&nbsp;';
+		}
+		
+		return $slc;
+	}
+	
+	// membuat combo box
+	public static function createSelectMultiple($nameid,$arrval='',$arrvalue=array(),$edit=true,$class='form-control',$add='',$emptyrow=false) {
+		if(!is_array($arrvalue))$arrvalue = array($arrvalue);
+		if(!empty($edit)) {
+			$slc = '<select  data-placeholder="Pilih..." tabindex="4" multiple name="'.$nameid.'" id="'.$nameid.'"';
+			$slc .= ' class="chosen-select '.(($class != '')?$class:'').'"';
+			if($add != '') $slc .= ' '.$add;
+			$slc .= ">\n";
+			if($emptyrow)
+				$slc .= '<option></option>'."\n";
+			if(is_array($arrval)) {
+				foreach($arrval as $key => $val) {
+					$slc .= '<option value="'.$key.'"'.(in_array($key,$arrvalue) ? ' selected' : '').'>';
+					$slc .= $val.'</option>'."\n";
+				}
+			}
+			$slc .= '</select>';
+		}
+		else {
+			$value_d = array();
+			if(is_array($arrval)) {
+				foreach($arrval as $key => $val) {
+					if(in_array($key,$arrvalue)) {
+						$value_d[] = $val;
+					}
+				}
+			}
+			$slc .= implode(', ', $value_d);
 			if(!isset($slc))
 				$slc = '&nbsp;';
 		}
@@ -248,7 +283,7 @@ class UI {
         //    $class = 'control_style';
 			
 		if (!$edit && $value == $valuecontrol) {
-			return '<img class="link" src="'. URL::Base("assets/img/light/check.png").'" />';
+			return '<span class="glyphicon glyphicon-ok" style="color:green"></span>';
 		}
 
 		$tb = '<input type="checkbox" name="'.$nameid.'" id="'.$nameid.'"';
@@ -378,18 +413,33 @@ class UI {
 	      <tr>
 	        <td></td>
 	        <?php foreach($header as $rows){
+	        	if($rows['field']){
+	        		$rows['name'] = $rows['field'];
+	        	}
+	        	$edited = true;
+	        	if($rows['filter']===false){
+	        		$edited = $rows['filter'];
+	        		$filter_arr[$rows['name']] = '&nbsp';
+	        	}
 	        	switch ($rows['type']) {
 	        		case 'list':
-	        			echo "<td>".UI::createSelect("list_search[".$rows['name']."]",$rows['value'],$filter_arr[$rows['name']],true,'form-control')."</td>";
+	        			echo "<td>".UI::createSelect("list_search[".$rows['name']."]",$rows['value'],$filter_arr[$rows['name']],$edited,'form-control')."</td>";
 	        			break;
 	        		
 	        		case 'date':
-	        			$kg->plugin[]='datepicker';
-	            		echo "<td>".UI::createTextBox("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',true,'form-control datepicker','placeholder="Search '.$rows['label'].'..."')."</td>";
+	            		echo "<td style='position:relative'>".UI::createTextBox("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',$edited,'form-control datepicker','placeholder="Search '.$rows['label'].'..."')."</td>";
+	        			break;
+
+	        		case 'datetime':
+	            		echo "<td style='position:relative'>".UI::createTextBox("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',$edited,'form-control datetimepicker','placeholder="Search '.$rows['label'].'..."')."</td>";
+	        			break;
+
+	        		case 'number':
+	            		echo "<td style='position:relative'>".UI::createTextNumber("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',$edited,'form-control','')."</td>";
 	        			break;
 	        		
 	        		default:
-	            		echo "<td>".UI::createTextBox("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',true,'form-control','placeholder="Search '.$rows['label'].'..."')."</td>";
+	            		echo "<td>".UI::createTextBox("list_search[".$rows['name']."]",$filter_arr[$rows['name']],'','',$edited,'form-control','placeholder="Search '.$rows['label'].'..."')."</td>";
 	        			break;
 	        	}
 	        }
@@ -499,23 +549,38 @@ class UI {
     <?php
 	}
 
-	public static function showButtonMode($mode, $key=null, $edited=false) {
+	public static function showButtonMode($mode, $key=null, $edited=false, $add='', $class='btn-sm') {
+		$kg = get_instance();
+
 		$str = '';
+		if(count($kg->addbuttons)){
+			foreach ($kg->addbuttons as $key => $value) {
+				$str .= UI::getButton($value,null, $add, $class);
+			}
+		}
+
+		if(count($kg->buttons)){
+			foreach ($kg->buttons as $key => $value) {
+				$str .= UI::getButton($value,null, $add, $class);
+			}
+			return $str;
+		}
+
 		if ($mode === 'lst' || $mode === 'index' || $mode === 'daftar') {
-			$str .= UI::getButton('add');
-			$str .= UI::getButton('reset');
+			$str .= UI::getButton('add',null, $add, $class);
+			$str .= UI::getButton('reset',null, $add, $class);
 			return $str;
 		}
 
 		if ($mode === 'oneedit'){
 
-			$str .= UI::getButton('detail', $key);
+			$str .= UI::getButton('detail', $key, $add, $class);
 			return $str;
 		}
 
 		if ($mode === 'onedetail'){
 
-			$str .= UI::getButton('edit', $key);
+			$str .= UI::getButton('edit', $key, $add, $class);
 			return $str;
 		}
 
@@ -523,40 +588,54 @@ class UI {
 			//$str .= UI::getButton('save');
 			//$str .= UI::getButton('batal', $key);
 			
-			$str .= UI::getButton('add');
-			$str .= UI::getButton('lst');
+			$str .= UI::getButton('add',null, $add, $class);
+			$str .= UI::getButton('lst',null, $add, $class);
 			return $str;
 		}
 
 		if ($mode === 'add') {
 			//$str .= UI::getButton('save');
-			$str .= UI::getButton('lst');
+			$str .= UI::getButton('lst',null, $add, $class);
 			return $str;
 		}
 
 		if ($mode === 'detail') {
-			$str .= UI::getButton('edit', $key);
-			$str .= UI::getButton('delete', $key);
-			$str .= UI::getButton('add');
-			$str .= UI::getButton('lst');
+			$str .= UI::getButton('edit', $key, $add, $class);
+			$str .= UI::getButton('delete', $key, $add, $class);
+			$str .= UI::getButton('add',null, $add, $class);
+			$str .= UI::getButton('lst',null, $add, $class);
 			return $str;
 		}
 
 		if ($mode === 'save' && $edited) {
-			$str .= UI::getButton('save');
-			$str .= UI::getButton('batal', $key);
+			$str .= UI::getButton('save',null, $add, $class);
+			$str .= UI::getButton('batal', $key, $add, $class);
 			return $str;
 		}
 	}
 	
-	public static function getButton($id, $key=null, $add='') {
+	public static function getButton($id, $key=null, $add='', $class='btn-sm') {
 		$kg = get_instance();
+		$access_mode = array_values($kg->access_mode);
+		$page_escape = array_values($kg->page_escape);
+		if(
+			$kg->private == true
+			&& 
+			!in_array($id, $access_mode)
+			&&
+			!in_array($kg->page_ctrl, $page_escape)
+			&&
+			!$kg->is_super_admin
+		){
+			return false;
+		}
+
 		if($kg->data['add_param']){
 			$add_param = '/'.$kg->data['add_param'];
 		} 
 
 		if ($id === 'add') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-primary" value="Tambah" onclick="return goAdd()" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-primary" value="Tambah" onclick="return goAdd()" /> 
 			<script>
 		    function goAdd(){
 		        window.location = "'.URL::Base($kg->page_ctrl."/add".$add_param).'";
@@ -564,8 +643,17 @@ class UI {
 		    </script>';
 		}
 
+		if ($id === 'import') {
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-primary" value="Import" onclick="return goImport()" /> 
+			<script>
+		    function goImport(){
+		        window.location = "'.URL::Base($kg->page_ctrl."/import".$add_param).'";
+		    }
+		    </script>';
+		}
+
 		if ($id === 'edit') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-warning" value="Ubah" onclick="return goEdit(\''.$key.'\')" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-warning" value="Ubah" onclick="return goEdit(\''.$key.'\')" /> 
 			<script>
 		    function goEdit(id){
 		        window.location = "'.URL::Base($kg->page_ctrl."/edit".$add_param).'/"+id;
@@ -575,7 +663,7 @@ class UI {
 		}
 
 		if ($id === 'detail') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-warning" value="Detail" onclick="return goDetail(\''.$key.'\')" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-warning" value="Detail" onclick="return goDetail(\''.$key.'\')" /> 
 			<script>
 		    function goDetail(id){
 		        window.location = "'.URL::Base($kg->page_ctrl."/detail".$add_param).'/"+id;
@@ -585,7 +673,7 @@ class UI {
 		}
 
 		if ($id === 'delete') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-danger" value="Hapus" onclick="return goDelete(\''.$key.'\')" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-danger" value="Hapus" onclick="return goDelete(\''.$key.'\')" /> 
 			<script>
 		    function goDelete(id){
 		        if(confirm("Apakah Anda yakin akan mengahapus ?")){
@@ -596,7 +684,7 @@ class UI {
 		}
 
 		if ($id === 'lst' || $id === 'index') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-success" value="Daftar" onclick="return goList()" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-success" value="Daftar" onclick="return goList()" /> 
 			<script>
 			function goList(){
 			window.location = "'.URL::Base($kg->page_ctrl."/index".$add_param).'";
@@ -605,7 +693,7 @@ class UI {
 		}
 
 		if ($id === 'save') {
-			return '<input type="submit" class="btn btn-sm btn-success" value="Simpan" onclick="return goSave()" /> 
+			return '<input type="submit" class="btn '.$class.' btn-success" value="Simpan" onclick="return goSave()" /> 
 			<script>
 			function goSave(){      
 		      	$("#act").val(\'save\');
@@ -615,7 +703,7 @@ class UI {
 		}
 
 		if ($id === 'batal') {
-			return '<input type="submit" class="btn btn-sm btn-warning" value="Batal" onclick="return goBatal(\''.$key.'\')" /> 
+			return '<input type="submit" class="btn '.$class.' btn-warning" value="Batal" onclick="return goBatal(\''.$key.'\')" /> 
 			<script>
 			function goBatal(){
 				$("#act").val(\'reset\');
@@ -625,7 +713,7 @@ class UI {
 		}
 
 		if ($id === 'reset') {
-			return '<input type="button" '.$add.' class="btn btn-sm btn-success" value="Reset" onclick="return goReset()" /> 
+			return '<input type="button" '.$add.' class="btn '.$class.' btn-success" value="Reset" onclick="return goReset()" /> 
 			<script>
 			function goReset(){
 				$("#act").val(\'list_reset\');

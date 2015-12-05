@@ -8,7 +8,7 @@ function MyErrorHandler($errno, $errstr, $errfile, $errline)
 
     switch ($errno) {
     case E_USER_ERROR:
-        $error .= "<div style='clear:both'></div><b>My ERROR</b> [$errno] $errstr<br />\n";
+        $error .= "<b>My ERROR</b> [$errno] $errstr<br />\n";
         $error .= "  Fatal error on line $errline in file $errfile";
         $error .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
         $error .= "Aborting...<br />\n";
@@ -16,19 +16,19 @@ function MyErrorHandler($errno, $errstr, $errfile, $errline)
         break;
 
     case E_USER_WARNING:
-        $error .= "<div style='clear:both'></div><h4 align='center' style='margin-top:15%;color:#444'>My WARNING</b> [$errno] $errstr</h2>";
+        $error .= "<h4 align='center' style='margin-top:15%;color:#444'>My WARNING</b> [$errno] $errstr</h2>";
         break;
 
     case E_USER_NOTICE:
-        $error .= "<div style='clear:both'></div><h4 align='center' style='margin-top:15%;color:#444'>My NOTICE</b> [$errno] $errstr</h2>";
+        $error .= "<h4 align='center' style='margin-top:15%;color:#444'>My NOTICE</b> [$errno] $errstr</h2>";
         break;
 
     default:
 		$errstr = str_replace("call_user_func_array() expects parameter 1 to be a valid callback,","",$errstr);
-        $error .= "<div style='clear:both'></div><h4 align='center' style='margin-top:15%;color:#444'>$errstr</h4>";
+        $error .= "<h4 align='center' style='margin-top:15%;color:#444'>$errstr</h4>";
         break;
     }
 	throw new Exception($error);
 }
 
-#set_error_handler("MyErrorHandler");
+//set_error_handler("MyErrorHandler");

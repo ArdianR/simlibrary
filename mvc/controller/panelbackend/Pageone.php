@@ -3,10 +3,10 @@ class Pageone extends _adminController{
 
 	public function __construct(){
 		parent::__construct();
-		$this->init();
 	}
 	
-	private function init(){
+	protected function init(){
+		parent::init();
 		$this->viewlist = "panelbackend/pageonelist";
 		$this->viewdetail = "panelbackend/pageonedetail";
 		$this->template = "panelbackend/main";

@@ -18,7 +18,7 @@
 
         <input type="text" 
         class="form-control" name="username" id="username" 
-        placeholder="Email address" required autofocus>
+        placeholder="Username" required autofocus>
         <input type="password" 
         class="form-control" name="password" id="password"
         placeholder="Password" required>
@@ -92,7 +92,7 @@ $("#login").submit(function(){
 					$("#respon-msg").text(data.success).fadeOut('500');
 					$("#respon-msg").attr("class","alert alert-success");
 					$("#respon-msg").text(data.success).fadeIn('500');
-					window.location="<?php echo URL::Base("panelbackend");?>";
+					window.location="<?php echo URL::Base($_SESSION[SESSION_APP]['curr_page']);?>";
 				}
 			}
 		});

@@ -1,12 +1,4 @@
 *{ font-family: 'Open Sans',Arial,sans-serif;}
-input, textarea, select, .uneditable-input{
-	-webkit-border-radius: 0px;
-	-moz-border-radius: 0px;
-	border-radius: 0px;
-	padding:2px;
-	width:215px;
-}
-
 fieldset {
     border: 1px solid #F6F6F6;
     border-radius: 3px 3px 3px 3px;
@@ -35,11 +27,6 @@ fieldset legend{
 textarea{
 	width:auto;
 	height:auto;
-}
-select, input[type="file"] {
-    height: 24px;
-	width:220px;
-    line-height: 14px;
 }
 input[type="image"], input[type="checkbox"], input[type="radio"]{
 	display:inline;
@@ -92,19 +79,18 @@ input[type="image"], input[type="checkbox"], input[type="radio"]{
 	color:#555555;
 	text-shadow: 1px 1px 0 #FFFFFF;
 }
-form.form table td{
-	padding:3px;
-	font-weight:bold;    
-	font-size:11px;
+
+form#main_form table td.td-label{ 
     border: 1px solid #E9E9E9;
-    color: #666666;
-	-webkit-border-radius: 0px;
-	-moz-border-radius: 0px;
-	border-radius: 0px;
-}
-form.form table td.label{
 	background-color: #F6F6F6;
 	text-align:right;
+	vertical-align: middle;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+form#main_form table td.td-input{
+	position: relative;
+	vertical-align: middle;
 }
 h2{
 	font-size: 20px;
@@ -326,4 +312,9 @@ h1, h2, h3, h4, h5, h6, .tabs-title{
     color: #005580;
     opacity: 1;
 	text-decoration:none;
+}
+
+table.tb-jawaban p{
+	padding: 0px;
+	margin: 0px;
 }

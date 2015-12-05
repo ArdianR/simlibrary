@@ -17,6 +17,14 @@ function __autoload($class_name){
 		{
 				require_once(base_dir."helper/".$class_name.".php");
 		}
+		else if(is_file(ketonggo."library/".$class_name.".php"))
+		{
+				require_once(ketonggo."library/".$class_name.".php");
+		}
+		else if(is_file(ketonggo."helper/".$class_name.".php"))
+		{
+				require_once(ketonggo."helper/".$class_name.".php");
+		}
 		else if(is_file(core.$class_name.".php"))
 		{
 				require_once(core.$class_name.".php");

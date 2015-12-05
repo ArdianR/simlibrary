@@ -3,11 +3,11 @@
 							<div class="grid-container">
 								<div class="h-text-align-center">
 									<h3 class="t-heading -color-light is-hidden-phone">
-									Masukkan kata kunci pencarian
+									Masukkan kata kunci pencarian materi
 									</h3>
 
 										<div class="home-search__search">
-											<form accept-charset="UTF-8" action="<?=URL::Base('katalog/index')?>" class="search-field -size-xl -border-none" id="search" method="post">
+											<form accept-charset="UTF-8" action="<?=URL::Base('materi/index')?>" class="search-field -size-xl -border-none" id="search" method="post">
 												
 <input type="hidden" name="act" id="act" value='search'>
 												<div class="search-field__input">
@@ -22,85 +22,111 @@
 								</div>
 							</div>
 						</section>
-<section class="page-section -color-grey -border-bottom">
-  <div class="grid-container">
-    <div class="home-section">
-      <div class="home-section__header">
-        <h2 class="t-heading -size-l -margin-none">Buku Terbaru</h2>
-        <p class="t-body">Silahkan nikmati buku-buku terbaru dari kami</p>
-      </div>
 
-
-      <div class="home-section__item-thumbnail-carousel">
-        <div data-view="productList">
-          <ul class="item-thumbnail-carousel--row-10 overthrow">
-          <?php foreach($book_new as $row){ ?>
-                <li>
-                  
-<div class="item-thumbnail__image">
-    <a href="<?=URL::Base('katalog/buku_detail/'.$row['id_buku'])?>" >
-    <div class="crop">
-    <img alt="<?=$row['nama']?>" border="0" class="landscape-image-magnifier preload no_preview" 
-     src="<?=URL::Base('katalog/preview_file/'.$row['id_buku'])?>" title="" style="width:143px">
-     </div>
-     </a>
-
-    <h4 class="t-heading -size-xs">
-    <a href="<?=URL::Base('katalog/buku_detail/'.$row['id_buku'])?>" class="t-link -decoration-reversed -color-dark">
-    <?=$row['nama']?>
-    </a>
-    </h4>
-</div>
-                </li>
-
-
-
-          <?php }?>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 
 <section class="page-section -color-white -border-bottom">
   <div class="grid-container">
     <div class="home-section">
-      <div class="home-section__header">
-        <h2 class="t-heading -size-l -margin-none">Buku Terlaris</h2>
-        <p class="t-body">Buku-buku yang banyak diminati oleh pengunjung</p>
-      </div>
+      <div class="get-hosting__heading">
+    <h1>Jadwal Ujian</h1>
+    <h4>Berikut adalah jadwal ujian yang akan datang atau sedang berlangsung : </h4>
+  </div>
+<table class="table-general -width-three-col-equal -bordered-v -comparison-table h-spacing-above h-spacing-below">
+      <thead>
+        <tr>
+          <th>Nama Ujian</th>
+          <th width="50">Matapelajaran</th>
+          <th>Waktu</th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php if(count($ujian_live)){
+        foreach($ujian_live as $row){ ?>
+        <tr>
+          <td style="font-size: 14px;text-align:left"><?=$row['nama']?></td>
+          <td style="font-size: 14px;text-align:left;width:50px" width="50"><?=$row['matapelajaran']?></td>
+          <td style="font-size: 14px;text-align:left"><?=Eng2Ind($row['waktu_mulai'])?> sd <br/> <?=Eng2Ind($row['waktu_selesai'])?></td>
+        </tr>
+        <?php } }else{ ?>
+        <tr>
+          <td colspan="3">Tidak ada jadwal</td>
+        </tr>
+        <?php }?>
+      </tbody>
+    </table>
 
+
+    </div>
+  </div>
+</section>
+
+<section class="page-section -color-grey -border-bottom">
+  <div class="grid-container">
+    <div class="home-section">
+      <div class="get-hosting__heading">
+    <h1>Materi Terbaru</h1>
+    <h4>Silahkan nikmati materi-materi terbaru</h4>
+  </div>
+  <br/>
+      <div style="clear:both"></div>
       <div class="home-section__item-thumbnail-carousel">
-        <div data-view="productList">
-          <ul class="item-thumbnail-carousel--row-10 overthrow">
-          <?php foreach($best_book as $row){ ?>
-                <li>
-                  
-<div class="item-thumbnail__image">
-    <a href="<?=URL::Base('katalog/buku_detail/'.$row['id_buku'])?>" >
-    <div class="crop">
-    <img alt="<?=$row['nama']?>" border="0" class="landscape-image-magnifier preload no_preview" 
-     src="<?=URL::Base('katalog/preview_file/'.$row['id_buku'])?>" title="" style="width:143px">
-     </div>
-     </a>
-
-    <h4 class="t-heading -size-xs">
-    <a href="<?=URL::Base('katalog/buku_detail/'.$row['id_buku'])?>" class="t-link -decoration-reversed -color-dark">
-    <?=$row['nama']?>
-    </a>
-    </h4>
-</div>
-                </li>
-
-
-
+        <div data-view="productList t-body">
+        <ul>
+          <?php foreach($materi_new as $row){ ?>
+          <li class="materi-list">
+            <h2 class="t-heading -size-s">
+            <i class="e-icon -icon-folder"></i>
+              <a href="<?=$url=URL::Base('materi/detail/'.$row['id_materi'])?>" title="<?=$row['nama']?>" class="js-google-analytics__list-event-trigger t-link -color-inherit -decoration-reversed">
+                    <?=$row['nama']?>
+              </a>
+            </h2>
+          </li>
           <?php }?>
           </ul>
+      <div style="clear:both"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="page-section -color-white -border-bottom">
+  <div class="grid-container">
+    <div class="home-section">
+    <div class="home-section">
+      <div class="get-hosting__heading">
+    <h1>Artikel atau Berita Terbaru</h1>
+    <h4>Artikel menarik yang selalu terupdate</h4>
+  </div>
+  <br/>
+      <div style="clear:both"></div>
+      <div class="home-section__item-thumbnail-carousel">
+        <div data-view="productList">
+          <?php foreach($artikel_new as $rows){ 
+            $title = str_replace(" ", "-", $rows['nama']).'.html';
+          ?>
+          <section class="h-spacing-below">
+            <h2 class="t-heading -size-s">
+              <a href="<?=($url=URL::Base("page/detail/artikel/$rows[$pk]/$title"))?>" title="<?=$rows['nama']?>" class="js-google-analytics__list-event-trigger t-link -color-inherit -decoration-reversed">
+                <?=$rows['nama']?> </a>
+            </h2>
+          <div style="clear:both"></div>
+             
+            <?=ReadMorePlain($rows['isi'],50)?>
+          <br/>
+
+          <?php }?>
 
         </div>
       </div>
     </div>
   </div>
 </section>
+<style>
+.materi-list{
+  float:left; width:100%; max-width:450px
+}
+</style>

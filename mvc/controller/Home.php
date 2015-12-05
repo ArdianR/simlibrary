@@ -14,8 +14,11 @@ class Home extends _visitorController{
 	}
 	function _actionIndex(){
 
-		$this->data['book_new'] = $this->conn->GetArray("select * from library_buku order by created_date limit 6");
-		$this->data['best_book'] = $this->conn->GetArray("select * from library_buku order by created_date limit 6");
+		$this->data['artikel_new'] = $this->conn->GetArray("select * from contents_page where halaman = 'artikel' order by created_date limit 6");
+		$this->data['materi_new'] = $this->conn->GetArray("select * from elearning_materi order by created_date limit 10");
+		$this->data['ujian_live'] = $this->conn->GetArray("select a.*, b.nama as matapelajaran from elearning_ujian a
+			left join elearning_matapelajaran b on a.id_matapelajaran = b.id_matapelajaran
+			where now() between waktu_mulai and waktu_selesai or waktu_mulai > now() order by waktu_mulai asc");
 		$this->view("home");
 	}
 

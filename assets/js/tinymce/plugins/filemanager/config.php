@@ -17,7 +17,7 @@ $root = rtrim($_SERVER['DOCUMENT_ROOT'],'/'); // don't touch this configuration
 //   |    |   |    |-   |-      |- thumbs <- folder of thumbs [must have the write permission]
 
 $base_url="http://".$_SERVER["HTTP_HOST"]; //url base of site if you want only relative url leave empty
-$upload_dir = "/rsi/assets/js/tinymce/plugins/filemanager/files/"; // path from base_url to upload base dir
+$upload_dir = "/ketonggo_project/rsi/assets/js/tinymce/plugins/filemanager/files/"; // path from base_url to upload base dir
 $current_path = 'thumbs/'; // relative path from filemanager folder to upload files folder
 
 $MaxSizeUpload=100; //Mb

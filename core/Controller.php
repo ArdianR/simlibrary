@@ -12,7 +12,25 @@ class Controller{
 	public $mode;
 	public $session;
 	public $get=array();
+	public $addbuttons = array();
 	protected $xss_clean = false;
+	public $url = "";
+	public $urlaccess = "";
+	public $viewpath = "";
+	public $auth;
+	public $private = true;
+	static $referer = false;
+	public $pk;
+	public $limit = 5;
+	public $limit_arr = array('5','10','15');
+	public $arrNoquote = array();
+	protected $layout = "";
+	protected $viewdetail = "";
+	protected $viewlist = "";
+	protected $filter = " 1=1 ";
+	public $access_mode = array();
+	public $page_escape = array();
+	public $is_super_admin = false;
 	public function __construct()
 	{
 		self::$instance =& $this;
@@ -38,18 +56,32 @@ class Controller{
 		$this->FilterRequest();
 	}
 
-	protected function Plugin($plugin_arr=array()){
+	protected function Plugin(){
+		if(!count($this->plugin_arr))
+			return;
+				
+		#chosen
+		$plugin['chosen'] .= '<script src="'.URL::Base().'assets/js/chosen.jquery.js"></script>';
+		$plugin['chosen'] .= "<script>$(function() {
+        \$('.chosen-select').chosen({width:'100%'});
+        \$('.chosen-select-deselect').chosen({ allow_single_deselect: true });
+      });</script>";
+		$plugin['chosen'] .= '<link rel="stylesheet" href="'.URL::Base().'assets/css/bootstrap-chosen.css" />';
 
 		#date picker
-		$plugin['datepicker'] = '<script src="'.URL::Base().'assets/js/datepicker/js/bootstrap-datepicker.min.js"></script>';
-		$plugin['datepicker'] .= '<link href="'.URL::Base().'assets/js/datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet">';
-		$plugin['datepicker'] .= '<script>$(function(){$(".datepicker").datepicker({format: "yyyy-mm-dd"});});</script>';
+		$plugin['datepicker'] .= '<script src="'.URL::Base().'assets/js/datepicker/js/moment.min.js"></script>';
+		$plugin['datepicker'] .= '<script src="'.URL::Base().'assets/js/datepicker/js/bootstrap-datetimepicker.js"></script>';
+		$plugin['datepicker'] .= '<script>$(function(){$(".datepicker").datetimepicker({format: "YYYY-MM-DD",useCurrent:false});});</script>';
+		$plugin['datepicker'] .= '<script>$(function(){$(".datetimepicker").datetimepicker({format: "YYYY-MM-DD HH:mm:ss",useCurrent:false});});</script>';
+		$plugin['datepicker'] .= '<link rel="stylesheet" href="'.URL::Base().'assets/js/datepicker/css/bootstrap-datetimepicker.min.css" />';
 
 
 		#date picker
 		//$plugin['autocomplate'] = '<script src="'.URL::Base().'assets/js/typeahead.bundle.js"></script>';
 		$plugin['autocomplete'] = '<script src="'.URL::Base().'assets/js/bootstrap3-typeahead.min.js"></script>';
 
+
+		$plugin_arr=array_unique(array_values($this->plugin_arr));
 		foreach($plugin_arr as $k=>$v){
 			$this->data['add_plugin'] .= $plugin[$v]."\n";
 		}
@@ -173,14 +205,35 @@ class Controller{
 		if(is_array($filename))
 		{
 			foreach($filename as $k=>$v){
-				$v=ucwords(strtolower($v));
-				require_once(base_dir.'helper/'.$v.'.php');
+				$this->Helper($v);
 			}
 		}
 		else
 		{
-			$filename=ucwords(strtolower($filename));
-			require_once(base_dir.'helper/'.$filename.'.php');
+			if(is_file(base_dir.'helper/'.$filename.'.php')){
+				require_once(base_dir.'helper/'.$filename.'.php');
+			}elseif(is_file(ketonggo.'helper/'.$filename.'.php')){
+				require_once(ketonggo.'helper/'.$filename.'.php');
+			}
+		}
+		unset($filename);
+	}
+	
+	protected function Library($filename)
+	{
+		if(is_array($filename))
+		{
+			foreach($filename as $k=>$v){
+				$this->Library($v);
+			}
+		}
+		else
+		{
+			if(is_file(base_dir.'library/'.$filename.'.php')){
+				require_once(base_dir.'library/'.$filename.'.php');
+			}elseif(is_file(ketonggo.'library/'.$filename.'.php')){
+				require_once(ketonggo.'library/'.$filename.'.php');
+			}
 		}
 		unset($filename);
 	}
@@ -203,6 +256,9 @@ class Controller{
 	//load view with template
 	protected function View($view='')
 	{
+
+		$this->Plugin();
+
 		if(is_array($this->data))
 		{
 			foreach($this->data as $key=>$value)
@@ -232,6 +288,9 @@ class Controller{
 	}
 	//load view without template
 	protected function PartialView($view='',$string=false){
+
+		$this->Plugin();
+
 		if(is_array($this->data))
 		{
 			foreach($this->data as $key=>$value)
@@ -294,5 +353,27 @@ class Controller{
 	
 	protected function SetFlash($key, $msg){
 		$this->session->Set($this->ctrl.$key, $msg);
+	}
+	
+
+	function GenerateTree($row, $colparent, $colid, $collabel, $valparent=null, &$return=array(), &$i=0, $level=0){
+		$level++;
+		foreach ($row as $key => $value) {
+			# code...
+			if($value[$colparent]==$valparent){
+				unset($row[$key]);
+
+				$space = '';
+				for($k=1; $k<$level; $k++){
+					$space .='---';
+				}
+
+				$value[$collabel] = $space.$value[$collabel];
+				$return[$i]=$value;
+
+				$i++;
+				$this->GenerateTree($row, $colparent, $colid, $collabel, $value[$colid], $return, $i, $level);
+			}
+		}
 	}
 }

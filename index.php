@@ -1,5 +1,6 @@
 <?php
 define("base_dir",dirname(__FILE__).'/');
+define("ketonggo",base_dir.'../simlibrary/');
 define("core",base_dir.'core/');
 define("SESSION_APP",'SESSION_APP');
 define("fileindex", basename(__FILE__));

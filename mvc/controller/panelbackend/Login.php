@@ -8,7 +8,11 @@ class Login extends Controller{
 	function _actionIndex(){
 		if($_SESSION[SESSION_APP]['login'])
 		{
-			URL::Redirect('panelbackend');
+			if($_SESSION[SESSION_APP]['curr_page']){
+				URL::Redirect($_SESSION[SESSION_APP]['curr_page']);
+			}else{
+				URL::Redirect('panelbackend');
+			}
 		}
 		else
 		{
