@@ -28,16 +28,6 @@ class Buku extends _adminController{
 		}
 
 		$this->model = new BukuModel();
-		$kategori = new KategoriModel();
-
-		$rskategori = $kategori->GArray();
-
-		$kategoriarr = array(''=>'');
-		foreach($rskategori as $row){
-			$kategoriarr[$row['id_kategori']] = $row['nama'];
-		}
-
-		$this->data['kategoriarr'] = $kategoriarr;
 		$pengarang = new PengarangModel();
 
 		$rspengarang = $pengarang->GArray();
@@ -48,16 +38,6 @@ class Buku extends _adminController{
 		}
 
 		$this->data['pengarangarr'] = $pengarangarr;
-		$statuseksemplar = new StatusEksemplarModel();
-
-		$rsstatuseksemplar = $statuseksemplar->GArray();
-
-		$statuseksemplararr = array(''=>'');
-		foreach($rsstatuseksemplar as $row){
-			$statuseksemplararr[$row['id_status_eksemplar']] = $row['nama'];
-		}
-
-		$this->data['statuseksemplararr'] = $statuseksemplararr;
 		$tipekoleksi = new TipekoleksiModel();
 
 		$rstipekoleksi = $tipekoleksi->GArray();
@@ -108,12 +88,34 @@ class Buku extends _adminController{
 		}
 
 		$this->data['bahasaarr'] = $bahasaarr;
+		$kategori = new KategoriModel();
+
+		$rskategori = $kategori->GArray();
+
+		$kategoriarr = array(''=>'');
+		foreach($rskategori as $row){
+			$kategoriarr[$row['id_kategori']] = $row['nama'];
+		}
+
+		$this->data['kategoriarr'] = $kategoriarr;
 
 		$this->pk = $this->model->pk;
 		$this->data['pk'] = $this->pk;
 		$this->plugin_arr = array(
 			''
 		);
+	}
+
+		protected function _getDetail($id){
+		$this->data['row']['id_pengarang'] = array();
+		$guruarr = $this->conn->GetArray("select id_pengarang from pengarang where id_buku = '$id'");
+		foreach ($guruarr as $key => $value) {
+			# code...
+			$this->data['row']['id_pengarang'][]=$value['id_pengarang'];
+		}
+	}
+	protected function _addUpdate($id=null){
+		return $this->_uploadFile($id);
 	}
 
 	protected function Header(){
@@ -124,25 +126,26 @@ class Buku extends _adminController{
 				'width'=>"auto",
 				'type'=>"varchar",
 			),
+			
 			array(
-				'name'=>'id_pengarang', 
-				'label'=>' Pengarang', 
+				'name'=>'isbn_issn', 
+				'label'=>'ISSN', 
+				'width'=>"auto",
+				'type'=>"varchar",
+			),
+			
+			array(
+				'name'=>'id_kategori', 
+				'label'=>' Kategori', 
 				'width'=>"auto",
 				'type'=>"list",
-				'value'=>$this->data['pengarangarr'],
+				'value'=>$this->data['kategoriarr'],
 			),
 			array(
-				'name'=>'id_lokasibuku', 
-				'label'=>' Lokasibuku', 
+				'name'=>'modified_date', 
+				'label'=>'Terakhir Diubah', 
 				'width'=>"auto",
-				'type'=>"list",
-				'value'=>$this->data['lokasibukuarr'],
-			),
-			array(
-				'name'=>'deskripsi', 
-				'label'=>'Deskripsi', 
-				'width'=>"auto",
-				'type'=>"text",
+				'type'=>"decimal",
 			),
 		);
 	}
@@ -154,7 +157,9 @@ class Buku extends _adminController{
 			'pernyataan'=>$this->post['pernyataan'],
 			'edisi'=>$this->post['edisi'],
 			'info_detail'=>$this->post['info_detail'],
-			'id_eksemplar'=>$this->post['id_eksemplar'],
+			'pola'=>$this->post['pola'],
+			'dari'=>$this->post['dari'],
+			'ke'=>$this->post['ke'],
 			'id_tipekoleksi'=>$this->post['id_tipekoleksi'],
 			'isbn_issn'=>$this->post['isbn_issn'],
 			'id_penerbit'=>$this->post['id_penerbit'],
@@ -208,13 +213,28 @@ class Buku extends _adminController{
 				'rules'=>"required",
 			),
 			array(
-				'field'=>'id_eksemplar', 
-				'label'=>' Eksemplar', 
+				'field'=>'pola', 
+				'label'=>'Pola', 
 				'rules'=>"required",
 			),
 			array(
-				'field'=>'id_eksemplar', 
-				'label'=>' Eksemplar', 
+				'field'=>'dari', 
+				'label'=>'Dari', 
+				'rules'=>"required",
+			),
+			array(
+				'field'=>'dari', 
+				'label'=>'Dari', 
+				'rules'=>"number",
+			),
+			array(
+				'field'=>'ke', 
+				'label'=>'Ke', 
+				'rules'=>"required",
+			),
+			array(
+				'field'=>'ke', 
+				'label'=>'Ke', 
 				'rules'=>"number",
 			),
 			array(
@@ -303,6 +323,104 @@ class Buku extends _adminController{
 				'rules'=>"number",
 			),
 		);
+
 	}
 
+protected function _addInsert($id){
+		
+		if($this->post['id_pengarang']){
+			$return = $this->_delsertPengarang($id);
+		}
+
+		return $return;
+	}
+
+	function _delsertPengarang($id){
+		$return = $this->model->Execute("delete from pengarang where id_buku = '$id'");
+		if(is_array($this->post['id_pengarang'])){
+			foreach ($this->post['id_pengarang'] as $key => $value) {
+				if($return){
+					if(!$value)
+						continue;
+
+					$record = array();
+					$record['id_pengarang'] = $value;
+					$record['id_buku'] = $id;
+			        $col = $this->conn->SelectLimit("select * from buku",1);
+			        $sql = $this->conn->GetInsertSQL($col, $record);
+			        
+			        if($sql){
+					    $return = $this->conn->Execute($sql);
+					}
+				}
+			}
+		}elseif($this->post['id_pengarang']){
+			if($return){
+				$record = array();
+				$record['id_pengarang'] = $id;
+				$record['id_buku'] = $id;
+		        $col = $this->conn->SelectLimit("select * from buku",1);
+		        $sql = $this->conn->GetInsertSQL($col, $record);
+		        
+		        if($sql){
+				    $return = $this->conn->Execute($sql);
+				}
+			}
+		}
+		return $return;
+	}
+
+	protected function _addUpdate($id){
+		$record = $this->Record();
+		$record1 = array();
+		$record1['username'] = $record['email'];
+		$record1['group_id'] = 3;
+		$record1['name'] = $record['nama'];
+		$record1['password'] = sha1(md5($record['nip']));
+		$return = $this->_upsertUser($record1);
+
+		if($return['success'] && $this->post['id_pengarang']){
+			$return = $this->_delsertPengarang$id);
+		}
+
+		return $return;
+	}
+
+	protected function _uploadFile($id_materi=null){
+		$return = array('success'=>true);
+
+		if($_FILES['file']['name']){
+			if(is_array($_FILES['file']['name'])){
+				foreach ($_FILES['file']['name'] as $key => $value) {
+					if(!$_FILES['file']['name'][$key])
+						return $return;
+					
+					if(!in_array($_FILES['file']['type'][$key], $this->data['typearr'])){
+						return false;
+					}
+					$record = array();
+					$record['nama'] = $_FILES['file']['name'][$key];
+					$record['id_materi'] = $id_materi;
+					$record['content_type'] = $_FILES['file']['type'][$key];
+					$record['isi_file'] = base64_encode(file_get_contents($_FILES['file']['tmp_name'][$key]));
+					if($return){
+						$return = $this->modelfile->Insert($record);
+					}
+				}
+			}else{
+				if(!in_array($_FILES['file']['type'][$key], $this->data['typearr'])){
+					return false;
+				}
+				$record = array();
+				$record['nama'] = $_FILES['file']['name'];
+				$record['id_materi'] = $id_materi;
+				$record['content_type'] = $_FILES['file']['type'];
+				$record['isi_file'] = base64_encode(file_get_contents($_FILES['file']['tmp_name']));
+				if($return){
+					$return = $this->modelfile->Insert($record);
+				}
+			}
+		}
+		return $return;
+	}
 }
