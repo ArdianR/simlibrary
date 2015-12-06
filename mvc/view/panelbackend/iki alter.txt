@@ -1,0 +1,18 @@
+ALTER TABLE `librarian`.`daftar_buku` 
+ADD COLUMN `created_date` DATETIME NULL,
+ADD COLUMN `modified_date` DATETIME NULL,
+ADD COLUMN `created_by` INT NULL,
+ADD COLUMN `modified_by` INT NULL;
+menambahkan kolom created_date, modified_date, created_by, modified_by
+untuk megetahui kapn dan siapa user yang edit db,
+
+gunakan left join dan righ join untuk menampilkan database
+
+ingat, untuk join menggukan databse fk
+
+webhoster
+appwebku
+ba1
+
+arips4@gmail.com
+multimedia33
