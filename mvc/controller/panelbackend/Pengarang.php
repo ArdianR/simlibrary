@@ -34,7 +34,7 @@ class Pengarang extends _adminController{
 
 		$kepengaranganarr = array(''=>'');
 		foreach($rskepengarangan as $row){
-			$kepengaranganarr[$row['id_kepengarangan']] = $row['nama'];
+			$kepengaranganarr[$row['id_kepengarangan']] = $row['jenis'];
 		}
 
 		$this->data['kepengaranganarr'] = $kepengaranganarr;
@@ -116,11 +116,6 @@ class Pengarang extends _adminController{
 				'field'=>'daftar_terkendali', 
 				'label'=>'Daftar Terkendali', 
 				'rules'=>"required",
-			),
-			array(
-				'field'=>'daftar_terkendali', 
-				'label'=>'Daftar Terkendali', 
-				'rules'=>"number",
 			),
 		);
 	}

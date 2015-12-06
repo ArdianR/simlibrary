@@ -36,8 +36,9 @@ class Buku extends _adminController{
 		foreach($rspengarang as $row){
 			$pengarangarr[$row['id_pengarang']] = $row['nama'];
 		}
-
+		
 		$this->data['pengarangarr'] = $pengarangarr;
+		
 		$tipekoleksi = new TipekoleksiModel();
 
 		$rstipekoleksi = $tipekoleksi->GArray();
@@ -106,17 +107,15 @@ class Buku extends _adminController{
 		);
 	}
 
-		protected function _getDetail($id){
+	protected function _getDetail($id){
 		$this->data['row']['id_pengarang'] = array();
-		$guruarr = $this->conn->GetArray("select id_pengarang from pengarang where id_buku = '$id'");
+		$guruarr = $this->conn->GetArray("select id_pengarang from pengarang where id_pengarang = '$id'");
 		foreach ($guruarr as $key => $value) {
 			# code...
 			$this->data['row']['id_pengarang'][]=$value['id_pengarang'];
 		}
 	}
-	protected function _addUpdate($id=null){
-		return $this->_uploadFile($id);
-	}
+
 
 	protected function Header(){
 		return array(
@@ -326,7 +325,7 @@ class Buku extends _adminController{
 
 	}
 
-protected function _addInsert($id){
+	protected function _addInsert($id){
 		
 		if($this->post['id_pengarang']){
 			$return = $this->_delsertPengarang($id);
@@ -380,7 +379,10 @@ protected function _addInsert($id){
 		$return = $this->_upsertUser($record1);
 
 		if($return['success'] && $this->post['id_pengarang']){
-			$return = $this->_delsertPengarang$id);
+			$return = $this->_delsertPengarang($id);
+		}
+		if($return){
+			$return = $this->_uploadFile($id);
 		}
 
 		return $return;

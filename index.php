@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 'on');
+
 define("base_dir",dirname(__FILE__).'/');
 define("ketonggo",base_dir.'../simlibrary/');
 define("core",base_dir.'core/');
@@ -9,7 +11,7 @@ define("fileindex", basename(__FILE__));
 define('status','dev');
 switch (status){
 	case 'dev':
-		error_reporting(E_ALL ^ E_NOTICE);
+		error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT ^ E_WARNING);
 		require_once(core.'ErrorHandler.php');
 	break;
 	case 'prod':

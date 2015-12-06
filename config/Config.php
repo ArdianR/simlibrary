@@ -5,7 +5,7 @@ class Config{
 		'driver'=>'mysqli',
 		'host'=>'localhost',
 		'username'=>'root',
-		'password'=>'satudua',
+		'password'=>'arip33',
 		'database'=>'librarian',
 		'debug'=>0
 		);
