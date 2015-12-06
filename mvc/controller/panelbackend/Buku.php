@@ -75,7 +75,7 @@ class Buku extends _adminController{
 
 		$subjekarr = array(''=>'');
 		foreach($rssubjek as $row){
-			$subjekarr[$row['id_subjek']] = $row['nama'];
+			$subjekarr[$row['id_subjek']] = $row['kode_klasifikasi'];
 		}
 
 		$this->data['subjekarr'] = $subjekarr;
@@ -85,7 +85,7 @@ class Buku extends _adminController{
 
 		$bahasaarr = array(''=>'');
 		foreach($rsbahasa as $row){
-			$bahasaarr[$row['id_bahasa']] = $row['nama'];
+			$bahasaarr[$row['id_bahasa']] = $row['bahasa'];
 		}
 
 		$this->data['bahasaarr'] = $bahasaarr;
@@ -303,7 +303,7 @@ class Buku extends _adminController{
 			),
 			array(
 				'field'=>'id_bahasa', 
-				'label'=>' Bahasa', 
+				'label'=>'Bahasa', 
 				'rules'=>"number",
 			),
 			array(
@@ -335,7 +335,7 @@ class Buku extends _adminController{
 	}
 
 	function _delsertPengarang($id){
-		$return = $this->model->Execute("delete from pengarang where id_buku = '$id'");
+		$return = $this->model->Execute("delete from buku where id_buku = '$id'");
 		if(is_array($this->post['id_pengarang'])){
 			foreach ($this->post['id_pengarang'] as $key => $value) {
 				if($return){

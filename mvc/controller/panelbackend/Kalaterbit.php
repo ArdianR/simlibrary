@@ -34,7 +34,7 @@ class Kalaterbit extends _adminController{
 
 		$bahasaarr = array(''=>'');
 		foreach($rsbahasa as $row){
-			$bahasaarr[$row['id_bahasa']] = $row['nama'];
+			$bahasaarr[$row['id_bahasa']] = $row['bahasa'];
 		}
 
 		$this->data['bahasaarr'] = $bahasaarr;

@@ -12,7 +12,7 @@
 
 <tr>
 <td class="td-label"> Pengarang</td>
-<td class="td-input" colspan="5"><?php echo UI::createSelect('id_pengarang',$pengarangarr,$row['id_pengarang'],$edited,$class='form-control ',"style='width:15%'")?></td>
+<td class="td-input" colspan="5"><?php echo UI::createSelectMultiple('id_pengarang',$pengarangarr,$row['id_pengarang'],$edited,$class='form-control ',"style='width:100%'")?></td>
 </tr>
 
 <tr>
