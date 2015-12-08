@@ -28,6 +28,16 @@ class Buku extends _adminController{
 		}
 
 		$this->model = new BukuModel();
+		$kategori = new KategoriModel();
+
+		$rskategori = $kategori->GArray();
+
+		$kategoriarr = array(''=>'');
+		foreach($rskategori as $row){
+			$kategoriarr[$row['id_kategori']] = $row['nama'];
+		}
+
+		$this->data['kategoriarr'] = $kategoriarr;
 		$pengarang = new PengarangModel();
 
 		$rspengarang = $pengarang->GArray();
@@ -36,9 +46,18 @@ class Buku extends _adminController{
 		foreach($rspengarang as $row){
 			$pengarangarr[$row['id_pengarang']] = $row['nama'];
 		}
-		
+
 		$this->data['pengarangarr'] = $pengarangarr;
-		
+		$statuseksemplar = new StatusEksemplarModel();
+
+		$rsstatuseksemplar = $statuseksemplar->GArray();
+
+		$statuseksemplararr = array(''=>'');
+		foreach($rsstatuseksemplar as $row){
+			$statuseksemplararr[$row['id_status_eksemplar']] = $row['nama'];
+		}
+
+		$this->data['statuseksemplararr'] = $statuseksemplararr;
 		$tipekoleksi = new TipekoleksiModel();
 
 		$rstipekoleksi = $tipekoleksi->GArray();
@@ -75,7 +94,7 @@ class Buku extends _adminController{
 
 		$subjekarr = array(''=>'');
 		foreach($rssubjek as $row){
-			$subjekarr[$row['id_subjek']] = $row['kode_klasifikasi'];
+			$subjekarr[$row['id_subjek']] = $row['nama'];
 		}
 
 		$this->data['subjekarr'] = $subjekarr;
@@ -85,20 +104,10 @@ class Buku extends _adminController{
 
 		$bahasaarr = array(''=>'');
 		foreach($rsbahasa as $row){
-			$bahasaarr[$row['id_bahasa']] = $row['bahasa'];
+			$bahasaarr[$row['id_bahasa']] = $row['nama'];
 		}
 
 		$this->data['bahasaarr'] = $bahasaarr;
-		$kategori = new KategoriModel();
-
-		$rskategori = $kategori->GArray();
-
-		$kategoriarr = array(''=>'');
-		foreach($rskategori as $row){
-			$kategoriarr[$row['id_kategori']] = $row['nama'];
-		}
-
-		$this->data['kategoriarr'] = $kategoriarr;
 
 		$this->pk = $this->model->pk;
 		$this->data['pk'] = $this->pk;
@@ -106,16 +115,16 @@ class Buku extends _adminController{
 			''
 		);
 	}
-
-	protected function _getDetail($id){
-		$this->data['row']['id_pengarang'] = array();
-		$guruarr = $this->conn->GetArray("select id_pengarang from pengarang where id_pengarang = '$id'");
-		foreach ($guruarr as $key => $value) {
+	$typearrexttemp = array();
+		foreach ($this->data['typearrext'] as $key => $value) {
 			# code...
-			$this->data['row']['id_pengarang'][]=$value['id_pengarang'];
+			$ext = trim($value,'.');
+			$mime = mime($ext);
+			if(!is_array($mime)){
+				$mime = array($mime);
+			}
+			$typearrexttemp = array_merge($typearrexttemp,$mime);
 		}
-	}
-
 
 	protected function Header(){
 		return array(
@@ -125,26 +134,25 @@ class Buku extends _adminController{
 				'width'=>"auto",
 				'type'=>"varchar",
 			),
-			
 			array(
-				'name'=>'isbn_issn', 
-				'label'=>'ISSN', 
-				'width'=>"auto",
-				'type'=>"varchar",
-			),
-			
-			array(
-				'name'=>'id_kategori', 
-				'label'=>' Kategori', 
+				'name'=>'id_pengarang', 
+				'label'=>' Pengarang', 
 				'width'=>"auto",
 				'type'=>"list",
-				'value'=>$this->data['kategoriarr'],
+				'value'=>$this->data['pengarangarr'],
 			),
 			array(
-				'name'=>'modified_date', 
-				'label'=>'Terakhir Diubah', 
+				'name'=>'id_lokasibuku', 
+				'label'=>' Lokasibuku', 
 				'width'=>"auto",
-				'type'=>"decimal",
+				'type'=>"list",
+				'value'=>$this->data['lokasibukuarr'],
+			),
+			array(
+				'name'=>'deskripsi', 
+				'label'=>'Deskripsi', 
+				'width'=>"auto",
+				'type'=>"text",
 			),
 		);
 	}
@@ -156,9 +164,7 @@ class Buku extends _adminController{
 			'pernyataan'=>$this->post['pernyataan'],
 			'edisi'=>$this->post['edisi'],
 			'info_detail'=>$this->post['info_detail'],
-			'pola'=>$this->post['pola'],
-			'dari'=>$this->post['dari'],
-			'ke'=>$this->post['ke'],
+			'id_eksemplar'=>$this->post['id_eksemplar'],
 			'id_tipekoleksi'=>$this->post['id_tipekoleksi'],
 			'isbn_issn'=>$this->post['isbn_issn'],
 			'id_penerbit'=>$this->post['id_penerbit'],
@@ -212,28 +218,13 @@ class Buku extends _adminController{
 				'rules'=>"required",
 			),
 			array(
-				'field'=>'pola', 
-				'label'=>'Pola', 
+				'field'=>'id_eksemplar', 
+				'label'=>' Eksemplar', 
 				'rules'=>"required",
 			),
 			array(
-				'field'=>'dari', 
-				'label'=>'Dari', 
-				'rules'=>"required",
-			),
-			array(
-				'field'=>'dari', 
-				'label'=>'Dari', 
-				'rules'=>"number",
-			),
-			array(
-				'field'=>'ke', 
-				'label'=>'Ke', 
-				'rules'=>"required",
-			),
-			array(
-				'field'=>'ke', 
-				'label'=>'Ke', 
+				'field'=>'id_eksemplar', 
+				'label'=>' Eksemplar', 
 				'rules'=>"number",
 			),
 			array(
@@ -303,7 +294,7 @@ class Buku extends _adminController{
 			),
 			array(
 				'field'=>'id_bahasa', 
-				'label'=>'Bahasa', 
+				'label'=>' Bahasa', 
 				'rules'=>"number",
 			),
 			array(
@@ -322,12 +313,8 @@ class Buku extends _adminController{
 				'rules'=>"number",
 			),
 		);
-
 	}
-
-	protected function _addInsert($id){
-		
-		if($this->post['id_pengarang']){
+	if($this->post['id_pengarang']){
 			$return = $this->_delsertPengarang($id);
 		}
 
@@ -381,14 +368,10 @@ class Buku extends _adminController{
 		if($return['success'] && $this->post['id_pengarang']){
 			$return = $this->_delsertPengarang($id);
 		}
-		if($return){
-			$return = $this->_uploadFile($id);
-		}
 
 		return $return;
 	}
-
-	protected function _uploadFile($id_materi=null){
+	function _uploadFile($id_materi=null){
 		$return = array('success'=>true);
 
 		if($_FILES['file']['name']){
@@ -425,4 +408,5 @@ class Buku extends _adminController{
 		}
 		return $return;
 	}
+
 }
